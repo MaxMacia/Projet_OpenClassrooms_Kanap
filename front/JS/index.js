@@ -1,4 +1,4 @@
-/* Affichage et intéractions avec la page d'accueil */
+/**Affichage et intéractions avec la page d'accueil */
 
 //récupération du domaine
 loadConfig().then(data => {

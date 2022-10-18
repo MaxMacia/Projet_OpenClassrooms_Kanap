@@ -1,4 +1,4 @@
-/* Permet de récupérer l'url du serveur */
+/**Permet de récupérer le domaine du serveur */
 
 async function loadConfig(){
     let result = await fetch("../config.json");

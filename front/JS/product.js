@@ -1,4 +1,4 @@
-/* Affichage et intéractions avec la page product */
+/**Affichage et intéractions avec la page product */
 
 //récupération de la chaîne de requête dans l'url
 const queryStringUrlId = document.location.search;
@@ -24,6 +24,19 @@ loadConfig().then(data => {
 //insertion des élément de la propriété colors de l'objet product dans l'élément #colors
         for(let i = 0; i < product.colors.length; i++){
             document.getElementById("colors").innerHTML += `<option value="${product.colors[i]}">${product.colors[i]}</option>`;
-        };  
+        };
+//
+        document.getElementById("quantity").addEventListener("change", (event) => {
+            document.getElementById("quantity").setAttribute("data-quantity", `${event.currentTarget.value}`);
+        });
+
+// 
+        document.getElementById("colors").addEventListener("change", (event) => {
+            document.getElementById("colors").setAttribute("data-color", `${event.currentTarget.value}`);
+        });
+// 
+        document.getElementById("addToCart").addEventListener("click", () => {
+            addToCart(product._id, document.getElementById("quantity").dataset.quantity, document.getElementById("colors").dataset.color);
+        });  
     })
 })
