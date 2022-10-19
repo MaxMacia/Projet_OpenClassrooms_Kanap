@@ -25,18 +25,27 @@ loadConfig().then(data => {
         for(let i = 0; i < product.colors.length; i++){
             document.getElementById("colors").innerHTML += `<option value="${product.colors[i]}">${product.colors[i]}</option>`;
         };
-//
+//Ajout d'un event listener sur l'élément .quantity pour récupérer les changement de quantité sous la forme d'un attribut "data-quantity"
         document.getElementById("quantity").addEventListener("change", (event) => {
             document.getElementById("quantity").setAttribute("data-quantity", `${event.currentTarget.value}`);
         });
 
-// 
+//Ajout d'un event listener sur l'élément .colors pour récupérer les changement de quantité sous la forme d'un attribut "data-color" 
         document.getElementById("colors").addEventListener("change", (event) => {
             document.getElementById("colors").setAttribute("data-color", `${event.currentTarget.value}`);
         });
-// 
+//Ajout d'un event listener sur l'élément .addToCart pour appeler la fonction addToCart() et enregistrer les données dans le local storage
         document.getElementById("addToCart").addEventListener("click", () => {
-            addToCart(product._id, document.getElementById("quantity").dataset.quantity, document.getElementById("colors").dataset.color);
+            let productToAdd = {
+                id: product._id,
+                quantity: Number(document.getElementById("quantity").dataset.quantity),
+                color: document.getElementById("colors").dataset.color,
+                imageUrl: product.imageUrl,
+                altTxt: product.altTxt,
+                name: product.name,
+                price: product.price
+            };
+            addToCart(productToAdd);
         });  
     })
 })

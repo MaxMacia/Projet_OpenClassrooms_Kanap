@@ -2,16 +2,8 @@
  * enregistrement d'un article dans le panier,
  * retrait d'un produit du panier et récupération de la liste du panier */
 
-function addToCart(productId, productQuantity, productColor){
-    let listCart = getCart();
-    for(let i = 0; i < listCart.length; i++){
-        if((listCart[i][0] == productId)&&(listCart[i][2] == productColor)){
-            let listCartQuantity = Number(listCart[i][1]) + Number(productQuantity)
-            listCart[i][1] = listCartQuantity;
-        } 
-    }
-    listCart.push([productId, productQuantity, productColor]);
-    saveCart(listCart);
+function saveCart(listCart){
+    localStorage.setItem("listCart", JSON.stringify(listCart))
 }
 
 function getCart(){
@@ -23,7 +15,23 @@ function getCart(){
     }
 }
 
-function saveCart(listCart){
-    localStorage.setItem("listCart", JSON.stringify(listCart))
+function addToCart(product){
+    let listCart = getCart();
+    let findProduct = listCart.find(p => ((p.id == product.id)&&(p.color == product.color)))
+    if(findProduct != undefined){
+        findProduct.quantity += product.quantity;
+    } else {
+        listCart.push(product);
+    }
+    saveCart(listCart);
 }
+
+function removeFromCart(product){
+    let listCart = getCart();
+    listCart = listCart.filter(p => ((p.id != product.id)&&(p.color != product.color)));
+    saveCart(listCart);
+}
+
+
+
 
