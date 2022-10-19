@@ -39,11 +39,7 @@ loadConfig().then(data => {
             let productToAdd = {
                 id: product._id,
                 quantity: Number(document.getElementById("quantity").dataset.quantity),
-                color: document.getElementById("colors").dataset.color,
-                imageUrl: product.imageUrl,
-                altTxt: product.altTxt,
-                name: product.name,
-                price: product.price
+                color: document.getElementById("colors").dataset.color
             };
             addToCart(productToAdd);
         });  
