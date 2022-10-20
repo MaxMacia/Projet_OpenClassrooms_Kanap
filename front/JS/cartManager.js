@@ -32,10 +32,21 @@ function addToCart(product){
 //retrait d'un produit du panier
 function removeFromCart(product){
     let listCart = getCart();
-    listCart = listCart.filter(p => ((p.id != product.id)&&(p.color != product.color)));
+    listCart = listCart.filter(p => ((p.id != product.id) || (p.color !== product.color)));
     saveCart(listCart);
 }
 
-
+/**    function changeQuantity(product, quantity){
+        let listCart = getCart();
+        let findProduct = listCart.find(p => ((p.id == product.id)&&(p.color == product.color)))
+        if(findProduct != undefined){
+            findProduct.quantity = quantity;
+            if(findProduct.quantity <= 0){
+                removeFromCart(findProduct);
+            } else {
+                saveCart(listCart);
+            }
+        }
+    } */
 
 

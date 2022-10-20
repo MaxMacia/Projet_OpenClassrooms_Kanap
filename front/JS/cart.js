@@ -6,10 +6,9 @@ let productData = {};
 let totalQuantity = 0;
 let totalPrice = 0;
 //Récupération des données du panier
-let jsonListProducts = getCart();
+let listCart = getCart();
 //Boucle For pour créer un objet product pour chaque produit sauvé dans le panier
-for (let jsonProduct of jsonListProducts) {
-    let product = new Product(jsonProduct);
+for (let product of listCart) {
 //Appel API pour ajouter dans l'objet productData les données sur le prix, l'url de l'image le texte alt de l'image et le nom, pour chaque objet product de la boucle For
     loadConfig().then(data => {
         config = data;
@@ -20,7 +19,6 @@ for (let jsonProduct of jsonListProducts) {
                 productData.imageUrl = jsonProduct.imageUrl;
                 productData.altTxt = jsonProduct.altTxt;
                 productData.name = jsonProduct.name;
-                console.log(productData);
 //Pour chaque objet product et productData insertion des différentes proiétés dans le contenu html de l'élément #cart__items
                 document.getElementById("cart__items").innerHTML += `
         <article class="cart__item" data-id="${product.id}" data-color="${product.color}">
@@ -43,6 +41,8 @@ for (let jsonProduct of jsonListProducts) {
                     min="1"
                     max="100"
                     value="${product.quantity}"
+                    data-id="${product.id}"
+                    data-color="${product.color}"
                     />
                 </div>
                 <div class="cart__item__content__settings__delete">
@@ -51,20 +51,51 @@ for (let jsonProduct of jsonListProducts) {
                 </div>
             </div>
             </article>`;
+
+            let itemQuantity = document.querySelectorAll(".itemQuantity");
+            for (let i = 0; i < itemQuantity.length; i++) {
+                itemQuantity[i].addEventListener("change", (event) => {
+                    let newQuantity = itemQuantity[i].value;
+                    let productToChange = listCart.find(p => ((p.id == itemQuantity[i].dataset.id)&&(p.color == itemQuantity[i].dataset.color)));
+                    console.log(productToChange);
+                    productToChange.quantity = newQuantity;
+                    if(productToChange.quantity <= 0){
+                        removeFromCart(productToChange);
+                        window.location.reload();
+                    } else {
+                        saveCart(listCart);
+                    }
+                    
+                });    
+            }
+            //let deleteItem = document.querySelectorAll("#deleteItem")[i].addEventListener;
+            
+            /** document.querySelectorAll("#deleteItem")[i].addEventListener("click", () => {
+                removeFromCart(product);
+                window.location.reload();
+            }) */
+            
+                
 //mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For
                 totalQuantity += product.quantity;
                 totalPrice += productData.price * product.quantity;
-                document.getElementById("deleteItem").addEventListener("click", () => {
-                    removeFromCart(product);
-                    window.location.reload();
-                });
 //insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
                 document.getElementById("totalQuantity").innerHTML = totalQuantity;
                 document.getElementById("totalPrice").innerHTML = totalPrice;
             })
 
-    })
 
+    })
+           
+    
 }
+
+
+
+
+ /**    document.getElementById("deleteItem").addEventListener("click", () => {
+                    removeFromCart(product);
+                    window.location.reload();
+                });  */
 
 
