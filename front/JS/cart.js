@@ -46,7 +46,12 @@ for (let product of listCart) {
                     />
                 </div>
                 <div class="cart__item__content__settings__delete">
-                    <p id="deleteItem">Supprimer</p>
+                    <p 
+                    id="deleteItem" 
+                    data-id="${product.id}" 
+                    data-color="${product.color}"
+                    >
+                    Supprimer</p>
                 </div>
                 </div>
             </div>
@@ -68,14 +73,17 @@ for (let product of listCart) {
                     
                 });    
             }
-            //let deleteItem = document.querySelectorAll("#deleteItem")[i].addEventListener;
-            
-            /** document.querySelectorAll("#deleteItem")[i].addEventListener("click", () => {
-                removeFromCart(product);
-                window.location.reload();
-            }) */
-            
-                
+            let deleteItem = document.querySelectorAll("#deleteItem");
+            console.log(deleteItem);
+            for (let i = 0; i < deleteItem.length; i++) {
+                deleteItem[i].addEventListener("click", () => {
+                    let productToBeRemoved = listCart.find(p => ((p.id == deleteItem[i].dataset.id)&&(p.color == deleteItem[i].dataset.color)));
+                    console.log(productToBeRemoved);
+                    removeFromCart(productToBeRemoved);
+                    window.location.reload();
+                })
+            }
+                            
 //mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For
                 totalQuantity += product.quantity;
                 totalPrice += productData.price * product.quantity;
@@ -89,13 +97,4 @@ for (let product of listCart) {
            
     
 }
-
-
-
-
- /**    document.getElementById("deleteItem").addEventListener("click", () => {
-                    removeFromCart(product);
-                    window.location.reload();
-                });  */
-
 
