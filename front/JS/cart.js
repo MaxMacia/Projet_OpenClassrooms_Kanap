@@ -104,4 +104,52 @@ for (let product of listCart) {
            
     
 }
+//Ajout d'un event listener à l'élément #firstName et appel la fonction validName
+document.getElementById("firstName").addEventListener("change", () => {
+    validName(document.getElementById("firstName"));
+})
+//Ajout d'un event listener à l'élément #lastName et appel la fonction validName
+document.getElementById("lastName").addEventListener("change", () => {
+    validName(document.getElementById("lastName"));
+})
+//Ajout d'un event listener à l'élément #adress et appel la fonction validAdress
+document.getElementById("address").addEventListener("change", () => {
+    validAdress(document.getElementById("address"));
+})
+//Ajout d'un event listener à l'élément #city et appel la fonction validCity
+document.getElementById("city").addEventListener("change", () => {
+    validCity(document.getElementById("city"));
+})
+//Ajout d'un event listener à l'élément #email et appel la fonction validemail
+document.getElementById("email").addEventListener("change", () => {
+    validEmail(document.getElementById("email"))
+})
+//Ajout d'un event listener à l'élément input[type='submit']
+document.querySelector(".cart__order__form input[type='submit']").addEventListener("click", (event => {
+    event.preventDefault();
+//Selectionne tout les champs du formulaire sauf le bouton commander
+    let fields = document.querySelectorAll(".cart__order__form input:not(:last-child)");
+    let valid = true;
+//Boucle For qui verifie la validité de chacun des champs
+    for (let field of fields){
+        valid &= check(field);
+        if (!valid){
+            break;
+        }
+    }
+    if (valid){
+        console.log("le formulaire est OK")
+    }
+}))
+
+
+
+
+
+
+
+
+
+
+
 
