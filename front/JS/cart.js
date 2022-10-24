@@ -60,25 +60,25 @@ for (let product of listCart) {
             let itemQuantity = document.querySelectorAll(".itemQuantity");
             for (let i = 0; i < itemQuantity.length; i++) {
                 itemQuantity[i].addEventListener("change", (event) => {
-                    let newQuantity = itemQuantity[i].value;
+                    let newQuantity = Number(itemQuantity[i].value);
                     let productToChange = listCart.find(p => ((p.id == itemQuantity[i].dataset.id)&&(p.color == itemQuantity[i].dataset.color)));
-                    console.log(productToChange);
                     productToChange.quantity = newQuantity;
+                    console.log(typeof newQuantity);
                     if(productToChange.quantity <= 0){
                         removeFromCart(productToChange);
                         window.location.reload();
                     } else {
                         saveCart(listCart);
                     }
-                    
+                    totalQuantity += productToChange.quantity;
+                    totalPrice += productData.price * productToChange.quantity;
+                    window.location.reload();
                 });    
             }
             let deleteItem = document.querySelectorAll("#deleteItem");
-            console.log(deleteItem);
             for (let i = 0; i < deleteItem.length; i++) {
                 deleteItem[i].addEventListener("click", () => {
                     let productToBeRemoved = listCart.find(p => ((p.id == deleteItem[i].dataset.id)&&(p.color == deleteItem[i].dataset.color)));
-                    console.log(productToBeRemoved);
                     removeFromCart(productToBeRemoved);
                     window.location.reload();
                 })
