@@ -56,35 +56,42 @@ for (let product of listCart) {
                 </div>
             </div>
             </article>`;
-
+//selection de l'element .itemQuantity
             let itemQuantity = document.querySelectorAll(".itemQuantity");
+//Boucle for pour ajouter un event listener sur chaque produit de la page
             for (let i = 0; i < itemQuantity.length; i++) {
                 itemQuantity[i].addEventListener("change", (event) => {
+//récupération de la valeur changée dans la variable newQuantity, selection de l'objet ciblé dans le panier assigné à la variable productTochange, et initialiasation de sa propriété quantity avec la variable newQuantity
                     let newQuantity = Number(itemQuantity[i].value);
                     let productToChange = listCart.find(p => ((p.id == itemQuantity[i].dataset.id)&&(p.color == itemQuantity[i].dataset.color)));
                     productToChange.quantity = newQuantity;
-                    console.log(typeof newQuantity);
+//Supression du produit si la quantité est 0 ou négative
                     if(productToChange.quantity <= 0){
                         removeFromCart(productToChange);
                         window.location.reload();
+//Enregistrement du produit modifié dans le panier
                     } else {
                         saveCart(listCart);
                     }
+//mise à jour des variables totalQuantity et totalPrice en cas de modification
                     totalQuantity += productToChange.quantity;
                     totalPrice += productData.price * productToChange.quantity;
                     window.location.reload();
                 });    
             }
+//Selection de l'element #deleteItem
             let deleteItem = document.querySelectorAll("#deleteItem");
+//Boucle for pour ajouter un event listener sur chaque produit de la page            
             for (let i = 0; i < deleteItem.length; i++) {
                 deleteItem[i].addEventListener("click", () => {
+//Selection de l'objet ciblé dans le panier assigné à la variable productToBeRemoved, et supression de l'objet
                     let productToBeRemoved = listCart.find(p => ((p.id == deleteItem[i].dataset.id)&&(p.color == deleteItem[i].dataset.color)));
                     removeFromCart(productToBeRemoved);
                     window.location.reload();
                 })
             }
                             
-//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For
+//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page
                 totalQuantity += product.quantity;
                 totalPrice += productData.price * product.quantity;
 //insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
