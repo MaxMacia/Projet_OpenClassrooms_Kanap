@@ -139,6 +139,34 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
     }
     if (valid){
         console.log("le formulaire est OK")
+        let contact = {
+            firstName: `${document.getElementById("firstName").value}`,
+            lastName: `${document.getElementById("lastName").value}`,
+            address: `${document.getElementById("address").value}`,
+            city: `${document.getElementById("city").value}`,
+            email: `${document.getElementById("email").value}`
+        };
+        let products = [];
+        for (product of listCart){
+            products.push(product.id)
+        }
+        loadConfig().then(data => {
+            config = data;
+            fetch(config.host + "/api/products/order", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contact: contact,
+                    products: products
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                location.href = `../html/confirmation.html?id=${result.orderId}`
+            })
+        })
     }
 }))
 
