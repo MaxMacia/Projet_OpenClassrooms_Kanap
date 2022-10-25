@@ -138,7 +138,7 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
         }
     }
     if (valid){
-        console.log("le formulaire est OK")
+//Création de l'objet contact pour la requête POST
         let contact = {
             firstName: `${document.getElementById("firstName").value}`,
             lastName: `${document.getElementById("lastName").value}`,
@@ -146,10 +146,17 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
             city: `${document.getElementById("city").value}`,
             email: `${document.getElementById("email").value}`
         };
+//Création du tableau des id des produits du panier pour la requête POST
         let products = [];
         for (product of listCart){
             products.push(product.id)
         }
+//Création d'un objet request contenant l'objet contactet le tableau d'id des produits pour la requête POST
+        request = {
+            contact: contact,
+            products: products
+        };
+//Requête POST        
         loadConfig().then(data => {
             config = data;
             fetch(config.host + "/api/products/order", {
@@ -157,12 +164,10 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    contact: contact,
-                    products: products
-                })
+                body: JSON.stringify(request)
             })
             .then(response => response.json())
+//Redirection vers la page confirmation avec l'id de la commande dans l'url
             .then(result => {
                 location.href = `../html/confirmation.html?id=${result.orderId}`
             })
