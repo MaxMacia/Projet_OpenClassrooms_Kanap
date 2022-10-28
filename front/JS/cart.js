@@ -2,9 +2,6 @@
 
 //Création d'un objet qui contiendra les données non présentes dans le local storage
 let productData = {};
-//Initialisation des variables totalQuantity et totalPrice qui contiendront le nombre d'article total dans le panier et le prix total
-let totalQuantity = 0;
-let totalPrice = 0;
 //Récupération des données du panier
 let listCart = getCart();
 //Boucle For pour créer un objet product pour chaque produit sauvé dans le panier
@@ -56,6 +53,20 @@ for (let product of listCart) {
                 </div>
             </div>
             </article>`;
+            function renderQuttyAndPrice(product){
+//Initialisation des variables totalQuantity et totalPrice qui contiendront le nombre d'article total dans le panier et le prix total
+                let totalQuantity = 0;
+                let totalPrice = 0;
+//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page pour un objet product
+                totalQuantity += product.quantity;
+                totalPrice += productData.price * product.quantity;
+//insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
+                document.getElementById("totalQuantity").innerHTML = totalQuantity;
+                document.getElementById("totalPrice").innerHTML = totalPrice;
+            }
+            renderQuttyAndPrice(product);
+
+
 //selection de l'element .itemQuantity
             let itemQuantity = document.querySelectorAll(".itemQuantity");
 //Boucle for pour ajouter un event listener sur chaque produit de la page
@@ -74,9 +85,7 @@ for (let product of listCart) {
                         saveCart(listCart);
                     }
 //mise à jour des variables totalQuantity et totalPrice en cas de modification
-                    totalQuantity += productToChange.quantity;
-                    totalPrice += productData.price * productToChange.quantity;
-                    window.location.reload();
+                    renderQuttyAndPrice(productToChange);
                 });    
             }
 //Selection de l'element #deleteItem
@@ -90,14 +99,8 @@ for (let product of listCart) {
                     window.location.reload();
                 })
             }
-                            
-//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page
-                totalQuantity += product.quantity;
-                totalPrice += productData.price * product.quantity;
-//insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
-                document.getElementById("totalQuantity").innerHTML = totalQuantity;
-                document.getElementById("totalPrice").innerHTML = totalPrice;
-            })
+                        
+        })
 
 
     })
@@ -147,10 +150,7 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
             email: `${document.getElementById("email").value}`
         };
 //Création du tableau des id des produits du panier pour la requête POST
-        let products = [];
-        for (product of listCart){
-            products.push(product.id)
-        }
+        const products = listCart.map(p => p.id);
 //Création d'un objet request contenant l'objet contactet le tableau d'id des produits pour la requête POST
         request = {
             contact: contact,
@@ -169,7 +169,7 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
             .then(response => response.json())
 //Redirection vers la page confirmation avec l'id de la commande dans l'url
             .then(result => {
-                location.href = `../html/confirmation.html?id=${result.orderId}`
+                location.href = `/front/html/confirmation.html?id=${result.orderId}`
             })
         })
     }

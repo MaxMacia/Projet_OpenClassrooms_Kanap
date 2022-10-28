@@ -2,7 +2,7 @@
 
 //Contrôle le nom et le prénom, retournre vrai ou faux, écris un message d'érreur si faux
 function validName(nameInput){
-    let nameRegexp = new RegExp("[a-zA-Zéèêôîëï-]", 'g');
+    let nameRegexp = new RegExp("^[a-zA-Zéèêôîëï-]+$", 'g');
     let nameTest = nameRegexp.test(nameInput.value);
     let nameErrorMsg = nameInput.nextElementSibling;
     if(!nameTest){
