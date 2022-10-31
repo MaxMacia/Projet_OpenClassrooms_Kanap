@@ -35,13 +35,19 @@ loadConfig().then(data => {
             document.getElementById("colors").setAttribute("data-color", `${event.currentTarget.value}`);
         });
 //Ajout d'un event listener sur l'élément .addToCart pour appeler la fonction addToCart() et enregistrer les données dans le local storage
+        let elt = document.createElement("div");
+        document.querySelector(".item__content").appendChild(elt);
         document.getElementById("addToCart").addEventListener("click", () => {
-            let productToAdd = {
-                id: product._id,
-                quantity: Number(document.getElementById("quantity").dataset.quantity),
-                color: document.getElementById("colors").dataset.color
-            };
-            addToCart(productToAdd);
+            if ((document.getElementById("quantity").dataset.quantity == null)||(document.getElementById("colors").dataset.color == null)) {
+                elt.innerHTML = "<h3>Veuillez s'il vous plaît renseigner une couleur et une quantité</h3>";
+            } else {
+                let productToAdd = {
+                    id: product._id,
+                    quantity: Number(document.getElementById("quantity").dataset.quantity),
+                    color: document.getElementById("colors").dataset.color
+                };
+                addToCart(productToAdd);
+                elt.innerHTML = "<h3>Votre produit a été ajouté au panier</h3>";            }    
         });  
     })
     .catch(err => {
