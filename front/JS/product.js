@@ -44,4 +44,12 @@ loadConfig().then(data => {
             addToCart(productToAdd);
         });  
     })
+    .catch(err => {
+        console.dir(err);
+        document.querySelector(".item__content").innerHTML = "<h3>Nous n'avons pas réussi à afficher le produit demandé, veuillez nous excuser pour le désagrément.</h3>"
+    })
+})
+.catch(err => {
+    console.dir(err);
+    document.querySelector(".item__content").innerHTML = "<h3>Nous n'avons pas réussi à afficher le produit demandé, veuillez nous excuser pour le désagrément.</h3>"
 })

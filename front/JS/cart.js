@@ -2,6 +2,9 @@
 
 //Création d'un objet qui contiendra les données non présentes dans le local storage
 let productData = {};
+//Initialisation des variables totalQuantity et totalPrice qui contiendront le nombre d'article total dans le panier et le prix total
+let totalQuantity = 0;
+let totalPrice = 0;
 //Récupération des données du panier
 let listCart = getCart();
 //Boucle For pour créer un objet product pour chaque produit sauvé dans le panier
@@ -53,20 +56,6 @@ for (let product of listCart) {
                 </div>
             </div>
             </article>`;
-            function renderQuttyAndPrice(product){
-//Initialisation des variables totalQuantity et totalPrice qui contiendront le nombre d'article total dans le panier et le prix total
-                let totalQuantity = 0;
-                let totalPrice = 0;
-//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page pour un objet product
-                totalQuantity += product.quantity;
-                totalPrice += productData.price * product.quantity;
-//insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
-                document.getElementById("totalQuantity").innerHTML = totalQuantity;
-                document.getElementById("totalPrice").innerHTML = totalPrice;
-            }
-            renderQuttyAndPrice(product);
-
-
 //selection de l'element .itemQuantity
             let itemQuantity = document.querySelectorAll(".itemQuantity");
 //Boucle for pour ajouter un event listener sur chaque produit de la page
@@ -85,7 +74,9 @@ for (let product of listCart) {
                         saveCart(listCart);
                     }
 //mise à jour des variables totalQuantity et totalPrice en cas de modification
-                    renderQuttyAndPrice(productToChange);
+                    totalQuantity += productToChange.quantity;
+                    totalPrice += productData.price * productToChange.quantity;
+                    window.location.reload();
                 });    
             }
 //Selection de l'element #deleteItem
@@ -99,11 +90,25 @@ for (let product of listCart) {
                     window.location.reload();
                 })
             }
-                        
-        })
+                            
+//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page
+                totalQuantity += product.quantity;
+                totalPrice += productData.price * product.quantity;
+//insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
+                document.getElementById("totalQuantity").innerHTML = totalQuantity;
+                document.getElementById("totalPrice").innerHTML = totalPrice;
+            })
+            .catch(err => {
+                console.dir(err);
+                document.getElementById("cart__items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
+            }) 
 
 
     })
+    .catch(err => {
+        console.dir(err);
+        document.getElementById("cart__items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
+    })    
            
     
 }
@@ -151,6 +156,7 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
         };
 //Création du tableau des id des produits du panier pour la requête POST
         const products = listCart.map(p => p.id);
+
 //Création d'un objet request contenant l'objet contactet le tableau d'id des produits pour la requête POST
         request = {
             contact: contact,
@@ -171,7 +177,19 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
             .then(result => {
                 location.href = `/front/html/confirmation.html?id=${result.orderId}`
             })
+            .catch(err => {
+                console.dir(err);
+                let errorElt = document.createElement("div");
+                document.querySelector("#emailErrorMsg").appendChild(errorElt);
+                errorElt.innerHTML = "<h3>Une erreur est survenue lors de la commande, veuillez nous excuser pour le désagrément.</h3>"
+            })
         })
+        .catch(err => {
+            console.dir(err);
+            let errorElt = document.createElement("div");
+            document.querySelector("#emailErrorMsg").appendChild(errorElt);
+            errorElt.innerHTML = "<h3>Une erreur est survenue lors de la commande, veuillez nous excuser pour le désagrément.</h3>"
+        }) 
     }
 }))
 
