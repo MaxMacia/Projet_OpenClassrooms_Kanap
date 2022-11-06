@@ -1,24 +1,37 @@
 /**Affichage et intéractions avec la page cart */
 
 //Création d'un objet qui contiendra les données non présentes dans le local storage
-let productData = {};
-//Initialisation des variables totalQuantity et totalPrice qui contiendront le nombre d'article total dans le panier et le prix total
-let totalQuantity = 0;
-let totalPrice = 0;
+let productDataById = {};
 //Récupération des données du panier
 let listCart = getCart();
+
+function updateQuantityAndPrice() {
+    const cart = getCart();
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    for (let product of cart) {
+        totalQuantity += product.quantity;
+        if (productDataById[product.id].price === undefined) {
+            continue;
+        }
+        totalPrice += productDataById[product.id].price * product.quantity;
+    }
+    //mise à jour des variables totalQuantity et totalPrice en cas de modification
+    document.getElementById("totalQuantity").innerHTML = totalQuantity;
+    document.getElementById("totalPrice").innerHTML = totalPrice;
+}
+
 //Boucle For pour créer un objet product pour chaque produit sauvé dans le panier
 for (let product of listCart) {
 //Appel API pour ajouter dans l'objet productData les données sur le prix, l'url de l'image le texte alt de l'image et le nom, pour chaque objet product de la boucle For
     loadConfig().then(data => {
-        config = data;
+        const config = data;
         fetch(config.host + "/api/products/" + product.id)
             .then(data => data.json())
             .then(jsonProduct => {
-                productData.price = jsonProduct.price;
-                productData.imageUrl = jsonProduct.imageUrl;
-                productData.altTxt = jsonProduct.altTxt;
-                productData.name = jsonProduct.name;
+                const productData = jsonProduct;
+                productDataById[product.id] = productData;
 //Pour chaque objet product et productData insertion des différentes proiétés dans le contenu html de l'élément #cart__items
                 document.getElementById("cart__items").innerHTML += `
         <article class="cart__item" data-id="${product.id}" data-color="${product.color}">
@@ -73,10 +86,8 @@ for (let product of listCart) {
                     } else {
                         saveCart(listCart);
                     }
-//mise à jour des variables totalQuantity et totalPrice en cas de modification
-                    totalQuantity += productToChange.quantity;
-                    totalPrice += productData.price * productToChange.quantity;
-                    window.location.reload();
+
+                    updateQuantityAndPrice();
                 });    
             }
 //Selection de l'element #deleteItem
@@ -90,28 +101,23 @@ for (let product of listCart) {
                     window.location.reload();
                 })
             }
-                            
-//mise à jour des variables totalQuantity et totalPrice à chaque tour de la boucle For lors du chargement de la page
-                totalQuantity += product.quantity;
-                totalPrice += productData.price * product.quantity;
-//insertion des variables totalQuantity et totalPrice dans le contenu html des éléments #totalQuantity et #totalPrice
-                document.getElementById("totalQuantity").innerHTML = totalQuantity;
-                document.getElementById("totalPrice").innerHTML = totalPrice;
-            })
-            .catch(err => {
-                console.dir(err);
-                document.getElementById("cart__items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
-            }) 
+
+            // update quantity and price html
+            updateQuantityAndPrice();
+        })
+        .catch(err => {
+            console.dir(err);
+            document.getElementById("cart__items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
+        }) 
 
 
     })
     .catch(err => {
         console.dir(err);
         document.getElementById("cart__items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
-    })    
-           
-    
+    })
 }
+
 //Ajout d'un event listener à l'élément #firstName et appel la fonction validName
 document.getElementById("firstName").addEventListener("change", () => {
     validName(document.getElementById("firstName"));
