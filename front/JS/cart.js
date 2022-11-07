@@ -1,4 +1,14 @@
 /**Affichage et intéractions avec la page cart */
+import { loadConfig } from "./config";
+import { saveCart } from "./cartManager";
+import { getCart } from "./cartManager";
+import { removeFromCart } from "./cartManager";
+import { validName } from "./formManager";
+import { validAdress } from "./formManager";
+import { validCity } from "./formManager";
+import { validEmail } from "./formManager";
+import { check } from "./formManager";
+
 
 //Création d'un objet qui contiendra les données non présentes dans le local storage
 let productDataById = {};
@@ -12,7 +22,8 @@ function updateQuantityAndPrice() {
 
     for (let product of cart) {
         totalQuantity += product.quantity;
-        if (productDataById[product.id].price === undefined) {
+        
+        if (productDataById[product.id]?.price === undefined) {
             continue;
         }
         totalPrice += productDataById[product.id].price * product.quantity;
@@ -36,13 +47,13 @@ for (let product of listCart) {
                 document.getElementById("cart__items").innerHTML += `
         <article class="cart__item" data-id="${product.id}" data-color="${product.color}">
             <div class="cart__item__img">
-                <img src="${productData.imageUrl}" alt="${productData.altTxt}" />
+                <img src="${productDataById[product.id].imageUrl}" alt="${productDataById[product.id].altTxt}" />
             </div>
             <div class="cart__item__content">
                 <div class="cart__item__content__description">
-                <h2>${productData.name}</h2>
+                <h2>${productDataById[product.id].name}</h2>
                 <p>${product.color}</p>
-                <p>${productData.price} €</p>
+                <p>${productDataById[product.id].price} €</p>
                 </div>
                 <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
@@ -164,13 +175,13 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
         const products = listCart.map(p => p.id);
 
 //Création d'un objet request contenant l'objet contactet le tableau d'id des produits pour la requête POST
-        request = {
-            contact: contact,
-            products: products
-        };
+        const request = {
+                contact: contact,
+                products: products
+            };
 //Requête POST        
         loadConfig().then(data => {
-            config = data;
+            const config = data;
             fetch(config.host + "/api/products/order", {
                 method: 'POST',
                 headers: {

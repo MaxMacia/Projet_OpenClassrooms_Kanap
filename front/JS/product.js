@@ -1,18 +1,21 @@
 /**Affichage et intéractions avec la page product */
+import { loadConfig } from "./config";
+import { addToCart } from "./cartManager";
 
-//récupération de la chaîne de requête dans l'url
-const queryStringUrlId = document.location.search;
-const urlSearchParams = new URLSearchParams(queryStringUrlId);
+
+//cibler un produit en fonction de l'id dans l'url
+const stringUrlId = document.location.search;
+const urlSearchParams = new URLSearchParams(stringUrlId);
 const urlProductId = urlSearchParams.get("id");
 //récupération du domaine
 loadConfig().then(data => {
-    config = data;
+    const config = data;
 //récupération de la ressource product
-    fetch(config.host +"/api/products/"+urlProductId)
+    fetch(config.host + "/api/products/" + urlProductId)
     .then(data => data.json())
 //création d'un objet product
     .then(jsonProduct => {
-        let product = new Product(jsonProduct);
+        let product = jsonProduct;
 //insertion des propriétés imageUrl et altTxt de l'objet product dans l'élément .item__img
         document.querySelector(".item__img").innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
 //insertion de la propriété name de l'objet product dans l'élément #title
@@ -25,27 +28,34 @@ loadConfig().then(data => {
         for(let i = 0; i < product.colors.length; i++){
             document.getElementById("colors").innerHTML += `<option value="${product.colors[i]}">${product.colors[i]}</option>`;
         };
-//Ajout d'un event listener sur l'élément .quantity pour récupérer les changement de quantité sous la forme d'un attribut "data-quantity"
+//Ajout d'un event listener sur l'élément .quantity pour récupérer
+//les changement de quantité sous la forme d'un attribut "data-quantity"
         document.getElementById("quantity").addEventListener("change", (event) => {
             document.getElementById("quantity").setAttribute("data-quantity", `${event.currentTarget.value}`);
         });
-
-//Ajout d'un event listener sur l'élément .colors pour récupérer les changement de quantité sous la forme d'un attribut "data-color" 
+//Ajout d'un event listener sur l'élément .colors pour récupérer
+//les changement de quantité sous la forme d'un attribut "data-color" 
         document.getElementById("colors").addEventListener("change", (event) => {
             document.getElementById("colors").setAttribute("data-color", `${event.currentTarget.value}`);
         });
-//Ajout d'un event listener sur l'élément .addToCart pour appeler la fonction addToCart() et enregistrer les données dans le local storage
+//Création d'une variable elt qui correspond à un nouvel élément div
         let elt = document.createElement("div");
+//Rattachement de ce nouvel élément à l'élément ayant pour classe .item__content
         document.querySelector(".item__content").appendChild(elt);
+//Ajout d'un event listener qui se déclanche au click sur le bouton addToCart
         document.getElementById("addToCart").addEventListener("click", () => {
-            if ((document.getElementById("quantity").dataset.quantity == null)||(document.getElementById("colors").dataset.color == null)) {
+//Condition if afin d'afficher un message d'erreur si la quantité ou la couleur ne sont pas renseignés
+            if ((document.getElementById("quantity").dataset.quantity == null)
+                ||(document.getElementById("colors").dataset.color == "")) {
                 elt.innerHTML = "<h3>Veuillez s'il vous plaît renseigner une couleur et une quantité</h3>";
             } else {
+//Si les conditions sont remplis, création d'un objet productToAdd avec l'id, la quantité et la couleur du produit
                 let productToAdd = {
                     id: product._id,
                     quantity: Number(document.getElementById("quantity").dataset.quantity),
                     color: document.getElementById("colors").dataset.color
                 };
+//Ajout du produit via la fonction addToCart()                
                 addToCart(productToAdd);
                 elt.innerHTML = "<h3>Votre produit a été ajouté au panier</h3>";            }    
         });  

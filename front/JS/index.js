@@ -1,16 +1,20 @@
 /**Affichage et intéractions avec la page d'accueil */
+import { loadConfig } from "./config";
 
-//récupération du domaine
+//récupération du domaine via la fonction loadConfig()
 loadConfig().then(data => {
-    config = data;
-//récupération des ressources products
+    const config = data;
+//récupération des ressources products via un appel API ave la fonction fetch
     fetch(config.host + "/api/products")
-    .then(data => data.json())
-    .then(jsonListProducts => {
-//création d'objets product pour chaque produit et insertion des propriétés de ces objets dans le contenu html de l'élément #items
-        for(let jsonProduct of jsonListProducts){
-            let product = new Product(jsonProduct);
-            document.getElementById("items").innerHTML += `<a href="./product.html?id=${product._id}">
+        .then(data => data.json())
+//récupération de la réponse sous la forme d'une liste qui sera parcourue pour inserer ses éléments dynamiquement dans le DOM
+        .then(jsonListProducts => {
+            for (let jsonProduct of jsonListProducts) {
+//A chaque tour de boucle, création d'un objet product qui correspond à chaque produit affiché sur la page
+                let product = jsonProduct;
+                document.getElementById(
+                    "items"
+                    ).innerHTML += `<a href="./product.html?id=${product._id}">
                                                                 <article>
                                                                 <img
                                                                     src="${product.imageUrl}"
@@ -22,14 +26,14 @@ loadConfig().then(data => {
                                                                 </p>
                                                                 </article>
                                                             </a>`;
-        }
-    })
+            }
+        })
+        .catch(err => {
+            console.dir(err);
+            document.getElementById("items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
+        })
+})
     .catch(err => {
         console.dir(err);
         document.getElementById("items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
     })
-})
-.catch(err => {
-    console.dir(err);
-    document.getElementById("items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
-})
