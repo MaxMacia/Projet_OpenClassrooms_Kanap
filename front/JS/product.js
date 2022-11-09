@@ -60,11 +60,13 @@ loadConfig().then(data => {
                 elt.innerHTML = "<h3>Votre produit a été ajouté au panier</h3>";            }    
         });  
     })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
     .catch(err => {
         console.dir(err);
         document.querySelector(".item__content").innerHTML = "<h3>Nous n'avons pas réussi à afficher le produit demandé, veuillez nous excuser pour le désagrément.</h3>"
     })
 })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
 .catch(err => {
     console.dir(err);
     document.querySelector(".item__content").innerHTML = "<h3>Nous n'avons pas réussi à afficher le produit demandé, veuillez nous excuser pour le désagrément.</h3>"

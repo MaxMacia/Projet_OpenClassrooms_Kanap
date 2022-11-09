@@ -1,6 +1,6 @@
 /**Affichage de la page confirmation */
 
-//récupération de la chaîne de requête dans l'url
+//cibler la commande en fonction de l'id dans l'url
 const stringUrlId = document.location.search;
 const urlSearchParams = new URLSearchParams(stringUrlId);
 const urlOrderId = urlSearchParams.get("id");

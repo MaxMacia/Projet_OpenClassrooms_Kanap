@@ -54,7 +54,9 @@ export function validEmail(emailInput){
 }
 //Contrôle les différents inputs et retourne la fonction appropriée
 export function check(input){
-    if (input == document.getElementById("firstName") || input == document.getElementById("lastName")){
+    if (input == document.getElementById("firstName")
+        ||
+        input == document.getElementById("lastName")){
         return validName(input);
     }
     if (input == document.getElementById("address")){

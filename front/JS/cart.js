@@ -10,32 +10,35 @@ import { validEmail } from "./formManager";
 import { check } from "./formManager";
 
 
-//Création d'un objet qui contiendra les données non présentes dans le local storage
+//Création d'un objet productDataById qui contiendra des objets product Data ayant pour clée l'id de l'objet
+//et pour valeur les données non présentes dans le local storage
 let productDataById = {};
 //Récupération des données du panier
 let listCart = getCart();
-
+//Fonction permettant de calculer et mettre à jour la quantité totale et le prix total 
 function updateQuantityAndPrice() {
+//Récupération du panier
     const cart = getCart();
+//Initiatisation de la quantité totale et du prix total
     let totalQuantity = 0;
     let totalPrice = 0;
-
+//Boucle FOR pour calculer la quantité totale et le prix total 
     for (let product of cart) {
         totalQuantity += product.quantity;
-        
+//Condition IF permettant d'ignorer la ligne suivante si le prix est non défini
         if (productDataById[product.id]?.price === undefined) {
             continue;
         }
         totalPrice += productDataById[product.id].price * product.quantity;
     }
-    //mise à jour des variables totalQuantity et totalPrice en cas de modification
+//Insertion des valeurs des variables totalQuantity et totalPrice dans le DOM
     document.getElementById("totalQuantity").innerHTML = totalQuantity;
     document.getElementById("totalPrice").innerHTML = totalPrice;
 }
-
 //Boucle For pour créer un objet product pour chaque produit sauvé dans le panier
 for (let product of listCart) {
-//Appel API pour ajouter dans l'objet productData les données sur le prix, l'url de l'image le texte alt de l'image et le nom, pour chaque objet product de la boucle For
+//Appel API pour ajouter dans l'objet productData les données sur le prix, 
+//l'url de l'image le texte alt de l'image et le nom, pour chaque objet product de la boucle For
     loadConfig().then(data => {
         const config = data;
         fetch(config.host + "/api/products/" + product.id)
@@ -43,7 +46,8 @@ for (let product of listCart) {
             .then(jsonProduct => {
                 const productData = jsonProduct;
                 productDataById[product.id] = productData;
-//Pour chaque objet product et productData insertion des différentes proiétés dans le contenu html de l'élément #cart__items
+//Pour chaque objet product et productData insertion des différentes propriétés dans
+//le contenu html de l'élément #cart__items
                 document.getElementById("cart__items").innerHTML += `
         <article class="cart__item" data-id="${product.id}" data-color="${product.color}">
             <div class="cart__item__img">
@@ -80,14 +84,19 @@ for (let product of listCart) {
                 </div>
             </div>
             </article>`;
-//selection de l'element .itemQuantity
+//Modifier la quantité d'un produit
+//selection de l'element .itemQuantity dans le DOM
             let itemQuantity = document.querySelectorAll(".itemQuantity");
 //Boucle for pour ajouter un event listener sur chaque produit de la page
             for (let i = 0; i < itemQuantity.length; i++) {
                 itemQuantity[i].addEventListener("change", (event) => {
-//récupération de la valeur changée dans la variable newQuantity, selection de l'objet ciblé dans le panier assigné à la variable productTochange, et initialiasation de sa propriété quantity avec la variable newQuantity
+//récupération de la valeur changée dans la variable newQuantity
                     let newQuantity = Number(itemQuantity[i].value);
-                    let productToChange = listCart.find(p => ((p.id == itemQuantity[i].dataset.id)&&(p.color == itemQuantity[i].dataset.color)));
+//selection de l'objet ciblé dans le panier assigné à la variable productTochange
+                    let productToChange = listCart.find(p => (
+                        (p.id == itemQuantity[i].dataset.id)&&(p.color == itemQuantity[i].dataset.color)
+                        ));
+//et initialiasation de sa propriété quantity avec la variable newQuantity
                     productToChange.quantity = newQuantity;
 //Supression du produit si la quantité est 0 ou négative
                     if(productToChange.quantity <= 0){
@@ -97,23 +106,24 @@ for (let product of listCart) {
                     } else {
                         saveCart(listCart);
                     }
-
                     updateQuantityAndPrice();
                 });    
             }
-//Selection de l'element #deleteItem
+//Supression d'un produit
+//Selection de l'element #deleteItem dans le DOM
             let deleteItem = document.querySelectorAll("#deleteItem");
 //Boucle for pour ajouter un event listener sur chaque produit de la page            
             for (let i = 0; i < deleteItem.length; i++) {
                 deleteItem[i].addEventListener("click", () => {
 //Selection de l'objet ciblé dans le panier assigné à la variable productToBeRemoved, et supression de l'objet
-                    let productToBeRemoved = listCart.find(p => ((p.id == deleteItem[i].dataset.id)&&(p.color == deleteItem[i].dataset.color)));
+                    let productToBeRemoved = listCart.find(p => (
+                        (p.id == deleteItem[i].dataset.id)&&(p.color == deleteItem[i].dataset.color)
+                        ));
                     removeFromCart(productToBeRemoved);
                     window.location.reload();
                 })
             }
-
-            // update quantity and price html
+// update quantity and price html
             updateQuantityAndPrice();
         })
         .catch(err => {
@@ -173,8 +183,7 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
         };
 //Création du tableau des id des produits du panier pour la requête POST
         const products = listCart.map(p => p.id);
-
-//Création d'un objet request contenant l'objet contactet le tableau d'id des produits pour la requête POST
+//Création d'un objet request contenant l'objet contact et le tableau d'id des produits pour la requête POST
         const request = {
                 contact: contact,
                 products: products
@@ -194,13 +203,16 @@ document.querySelector(".cart__order__form input[type='submit']").addEventListen
             .then(result => {
                 location.href = `/front/html/confirmation.html?id=${result.orderId}`
             })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
             .catch(err => {
                 console.dir(err);
                 let errorElt = document.createElement("div");
                 document.querySelector("#emailErrorMsg").appendChild(errorElt);
-                errorElt.innerHTML = "<h3>Une erreur est survenue lors de la commande, veuillez nous excuser pour le désagrément.</h3>"
+                errorElt.innerHTML = `<h3>Une erreur est survenue lors de la commande, 
+                                        veuillez nous excuser pour le désagrément.</h3>`
             })
         })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
         .catch(err => {
             console.dir(err);
             let errorElt = document.createElement("div");

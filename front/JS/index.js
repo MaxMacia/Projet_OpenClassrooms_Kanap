@@ -28,11 +28,13 @@ loadConfig().then(data => {
                                                             </a>`;
             }
         })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
         .catch(err => {
             console.dir(err);
             document.getElementById("items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
         })
 })
+//Si la promesse ne fonctionne pas, récupération de l'erreur et insertion d'un message d'erreur dans le DOM
     .catch(err => {
         console.dir(err);
         document.getElementById("items").innerHTML = "<h3>Nous n'avons pas réussi à afficher les produits, veuillez nous excuser pour le désagrément.</h3>"
